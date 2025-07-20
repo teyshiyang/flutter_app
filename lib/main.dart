@@ -195,14 +195,24 @@ class ShowFavouritesPage extends StatelessWidget {
     return Container(
       color: colorTheme,
       child: appState.favourites.isEmpty
-          ? Center(child: Text('No favourites yet!', style: TextStyle(color : Theme.of(context).colorScheme.onPrimary),))
+          ? Center(
+            child: Text('No favourites yet!', 
+            style: TextStyle(
+              color : Theme.of(context).colorScheme.onPrimary,
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              ),
+              ),
+            )
           : ListView(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     'You have ${appState.favourites.length} favourites:',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                 ),
                 for (var pair in appState.favourites)
