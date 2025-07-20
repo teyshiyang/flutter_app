@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         );
-      }
+      },
     );
   }
 }
@@ -104,6 +104,12 @@ class MyAppState extends ChangeNotifier {
       favourites.add(current);
       print('Added to favourites: $current');
     }
+    notifyListeners();
+  }
+
+  void removeFavourite(WordPair pair) {
+    favourites.remove(pair);
+    print('Removed from favourites: $pair');
     notifyListeners();
   }
 }
@@ -180,29 +186,47 @@ class WordCard extends StatelessWidget {
   }
 }
 
-class ShowFavouritesPage extends StatelessWidget{
+class ShowFavouritesPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    if (appState.favourites.isEmpty) {
-      return Center(
-        child: Text('No favourites yet!',),
-      );
-    }
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'You have ${appState.favourites.length} favourites:',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-        ),
-        for (var pair in appState.favourites)
-          ListTile(
-            title: Text(pair.asPascalCase),
-          ),
-      ],
+    final Color colorTheme = Theme.of(context).colorScheme.primary;
+
+    return Container(
+      color: colorTheme,
+      child: appState.favourites.isEmpty
+          ? Center(child: Text('No favourites yet!', style: TextStyle(color : Theme.of(context).colorScheme.onPrimary),))
+          : ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'You have ${appState.favourites.length} favourites:',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
+                for (var pair in appState.favourites)
+                  ListTile(
+                    title: Text(
+                      pair.asPascalCase,
+                      style: TextStyle(color : Theme.of(context).colorScheme.onPrimary),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete_outline),
+                        color : Theme.of(context).colorScheme.onPrimary,
+                        onPressed: (){
+                          appState.removeFavourite(pair);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Removed ${pair.asPascalCase} from favourites'),
+                              duration: Duration(seconds: 2,)
+                            )
+                          );
+                        }
+                      )
+                    ),
+              ],
+            ),
     );
   }
 }
